@@ -7,7 +7,8 @@ var cors = require('cors')
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 
-db.initDB();
+db.initUserDB();
+db.initTaskDB();
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -48,18 +49,18 @@ app.post('/users/login', (req, res) => {
         password: req.query.password
     }
     db.validateUser(models.loginModel, data => {
-        if(data.length === 0) {
+        if (data.length === 0) {
             res.status(401).json(data);
         }
         else {
-            const accessToken = jwt.sign({ username: data[0].username,  id: data[0].id }, process.env.JWT_SECRET, { expiresIn: '60m' });
+            const accessToken = jwt.sign({ username: data[0].username, id: data[0].id }, process.env.JWT_SECRET, { expiresIn: '60m' });
             models.loginModel = {
                 username: data[0].username,
                 firstname: data[0].firstname,
                 lastname: data[0].lastname,
                 accesstoken: accessToken
             }
-            
+
             res.status(res.statusCode).json(models.loginModel);
         }
     });
@@ -86,6 +87,66 @@ app.put('/user', authenticateJWT, (req, res) => {
     }
     db.editUserData(newData, data => {
         res.status(res.statusCode).json(data);
+    });
+});
+
+app.post('/tasks', authenticateJWT, (req, res) => {
+    let newTask = {
+        userId: req.user.id,
+        title: req.query.title,
+        description: req.query.description,
+        markedAsDone: false,
+        createdAt: new Date()
+    }
+    db.postTaskToDB(newTask, data => {
+        /*
+        models.addTaskModel = {
+            id: data[0].id,
+            title: data[0].title,
+            description: data[0].description,
+            markedAsDone: false,
+            createdAt: new Date()
+        }
+        */
+        res.status(res.statusCode).json(data);
+    });
+});
+
+app.get('/tasks', authenticateJWT, (req, res) => {
+    let userId = req.user.id;
+    db.getAllTasks(userId, data => {
+        let tasks = [];
+        data.forEach(task => {
+            models.taskModel = {
+                id: task.id,
+                title: task.title,
+                description: task.description,
+                markedAsDone: task.markedasdone,
+                createdAt: task.createdat
+            }
+            tasks.push(models.taskModel);
+        })
+        res.status(res.statusCode).json(tasks);
+    });
+});
+
+app.get('/tasks/:id', authenticateJWT, (req, res) => {
+    let userId = req.user.id;
+    let id = parseInt(req.params.id);
+    db.getTaskById(userId, id, data => {
+        if (data.length === 0) {
+            res.status(404).json();
+        }
+        else {
+            models.taskModel = {
+                id: data[0].id,
+                title: data[0].title,
+                description: data[0].description,
+                markedAsDone: data[0].markedasdone,
+                createdAt: data[0].createdat
+            }
+            res.status(res.statusCode).json(models.taskModel);
+        }
     });
 });
 

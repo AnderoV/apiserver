@@ -28,5 +28,21 @@ let editUserModel = {
     password: '',
 }
 
+let addTaskModel = {
+    id: 0,
+    title: '',
+    description: '',
+    markedAsDone: false,
+    createdAt: new Date
+}
 
-module.exports = { registerModel, loginModel, userModel, editUserModel };
+let taskModel = {
+    id: 0,
+    title: '',
+    description: '',
+    markedAsDone: false,
+    createdAt: new Date
+}
+
+
+module.exports = { registerModel, loginModel, userModel, editUserModel, addTaskModel, taskModel };
