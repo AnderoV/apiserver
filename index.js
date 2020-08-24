@@ -12,7 +12,24 @@ db.initDB();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.post('/users/register', function (req, res) {
+const authenticateJWT = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+
+    if (authHeader) {
+        jwt.verify(authHeader, process.env.JWT_SECRET, (err, user) => {
+            if (err) {
+                return res.sendStatus(403);
+            }
+
+            req.user = user;
+            next();
+        });
+    } else {
+        res.sendStatus(401);
+    }
+};
+
+app.post('/users/register', (req, res) => {
     models.registerModel = {
         username: req.query.username,
         firstname: req.query.firstname,
@@ -25,7 +42,7 @@ app.post('/users/register', function (req, res) {
     });
 });
 
-app.post('/users/login', function (req, res) {
+app.post('/users/login', (req, res) => {
     models.loginModel = {
         username: req.query.username,
         password: req.query.password
@@ -35,9 +52,23 @@ app.post('/users/login', function (req, res) {
             res.status(401).json(data);
         }
         else {
-            const accessToken = jwt.sign({ username: data.username,  password: data.password }, process.env.JWT_SECRET);
-            res.status(res.statusCode).json(accessToken);
+            const accessToken = jwt.sign({ username: data[0].username,  id: data[0].id }, process.env.JWT_SECRET, { expiresIn: '60m' });
+            models.loginModel = {
+                username: data[0].username,
+                firstname: data[0].firstname,
+                lastname: data[0].lastname,
+                accesstoken: accessToken
+            }
+            
+            res.status(res.statusCode).json(models.loginModel);
         }
+    });
+});
+
+app.get('/user', authenticateJWT, (req, res) => {
+    let userId = req.user.id;
+    db.getUserData(userId, data => {
+        res.status(res.statusCode).json(data);
     });
 });
 

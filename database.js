@@ -46,6 +46,23 @@ let validateUser = (model, callback) => {
     });
 }
 
+let getUserData = (id, callback) => {
+    dbClient.connect((err, client, done) => {
+        if (err) throw console.error(err);
+        client.query(`select * from users where users.id = ${id}`,
+            (err, result) => {
+                if (err) throw console.error(err);
+                data = result.rows;
+                if (!data) {
+                    data = {};
+                }
+                done();
+                callback(data);
+                return data;
+            });
+    });
+}
+
 let deleteRadioById = (table, id, callback) => {
     dbClient.connect((err, client, done) => {
         if (err) throw console.error(err);
@@ -152,4 +169,4 @@ let editPubRuleById = (table, newRule, id, callback) => {
     });
 }
 
-module.exports = { initDB, postUserToDB, validateUser };
+module.exports = { initDB, postUserToDB, validateUser, getUserData };

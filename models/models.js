@@ -8,8 +8,26 @@ let registerModel = {
 
 let loginModel = {
     username: '',
-    password: ''
+    firstname: '',
+    lastname: '',
+    accesstoken: ''
+}
+
+let userModel = {
+    username: '',
+    firstname: '',
+    lastname: '',
+    password: '',
+    createdAt: new Date
+}
+
+let editUserModel = {
+    username: '',
+    firstname: '',
+    lastname: '',
+    password: '',
+    createdAt: new Date
 }
 
 
-module.exports = { registerModel, loginModel };
+module.exports = { registerModel, loginModel, userModel, editUserModel };
