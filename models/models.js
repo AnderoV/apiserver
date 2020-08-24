@@ -1,11 +1,15 @@
 let registerModel = {
-    id: '',
     username: '',
     firstname: '',
     lastname: '',
     password: '',
-    createdAt: ''
+    createdAt: new Date
+}
+
+let loginModel = {
+    username: '',
+    password: ''
 }
 
 
-module.exports = { registerModel };
+module.exports = { registerModel, loginModel };
