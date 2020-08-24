@@ -143,4 +143,38 @@ let getTaskById = (userId, id, callback) => {
     });
 }
 
-module.exports = { initUserDB, postUserToDB, validateUser, getUserData, editUserData, initTaskDB, postTaskToDB, getAllTasks, getTaskById };
+let editTaskData = (newData, callback) => {
+    dbClient.connect((err, client, done) => {
+        if (err) throw console.error(err);
+        client.query(`update tasks set title = $1, description = $2, markedasdone = $3 where id = ${newData.id} and userid = ${newData.userId}`, [newData.title, newData.description, newData.markedAsDone],
+            (err, result) => {
+                if (err) throw console.error(err);
+                data = result.rows;
+                if (!data) {
+                    data = {};
+                }
+                done();
+                callback(data);
+                return data;
+            });
+    });
+}
+
+let deleteTask = (id, userid, callback) => {
+    dbClient.connect((err, client, done) => {
+        if (err) throw console.error(err);
+        client.query(`delete from tasks where id = ${id} and userid = ${userid}`,
+            (err, result) => {
+                if (err) throw console.error(err);
+                data = result.rows;
+                if (!data) {
+                    data = {};
+                }
+                done();
+                callback(data);
+                return data;
+            });
+    });
+}
+
+module.exports = { initUserDB, postUserToDB, validateUser, getUserData, editUserData, initTaskDB, postTaskToDB, getAllTasks, getTaskById, editTaskData, deleteTask };

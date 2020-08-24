@@ -44,5 +44,4 @@ let taskModel = {
     createdAt: new Date
 }
 
-
 module.exports = { registerModel, loginModel, userModel, editUserModel, addTaskModel, taskModel };

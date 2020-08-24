@@ -99,16 +99,13 @@ app.post('/tasks', authenticateJWT, (req, res) => {
         createdAt: new Date()
     }
     db.postTaskToDB(newTask, data => {
-        /*
         models.addTaskModel = {
-            id: data[0].id,
-            title: data[0].title,
-            description: data[0].description,
-            markedAsDone: false,
-            createdAt: new Date()
+            title: data.title,
+            description: data.description,
+            markedAsDone: data.markedAsDone,
+            createdAt: data.createdAt
         }
-        */
-        res.status(res.statusCode).json(data);
+        res.status(res.statusCode).json(models.addTaskModel);
     });
 });
 
@@ -147,6 +144,27 @@ app.get('/tasks/:id', authenticateJWT, (req, res) => {
             }
             res.status(res.statusCode).json(models.taskModel);
         }
+    });
+});
+
+app.put('/tasks/:id', authenticateJWT, (req, res) => {
+    let newData = {
+        userId: req.user.id,
+        id: parseInt(req.params.id),
+        title: req.query.title,
+        description: req.query.description,
+        markedAsDone: req.query.markedasdone
+    }
+    db.editTaskData(newData, data => {
+        res.status(res.statusCode).json(data);
+    });
+});
+
+app.delete('/tasks/:id', authenticateJWT, (req, res) => {
+    let id = parseInt(req.params.id)
+    let userid = req.user.id
+    db.deleteTask(id, userid, data => {
+        res.status(res.statusCode).json(data);
     });
 });
 
