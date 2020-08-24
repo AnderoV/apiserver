@@ -26,7 +26,6 @@ let editUserModel = {
     firstname: '',
     lastname: '',
     password: '',
-    createdAt: new Date
 }
 
 

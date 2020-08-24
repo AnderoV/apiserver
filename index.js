@@ -68,6 +68,23 @@ app.post('/users/login', (req, res) => {
 app.get('/user', authenticateJWT, (req, res) => {
     let userId = req.user.id;
     db.getUserData(userId, data => {
+        models.userModel = {
+            username: data[0].username,
+            firstname: data[0].firstname,
+            lastname: data[0].lastname,
+            password: data[0].password,
+            createdAt: data[0].createdat
+        }
+        res.status(res.statusCode).json(models.userModel);
+    });
+});
+
+app.put('/user', authenticateJWT, (req, res) => {
+    let newData = {
+        password: req.query.password,
+        userId: req.user.id
+    }
+    db.editUserData(newData, data => {
         res.status(res.statusCode).json(data);
     });
 });

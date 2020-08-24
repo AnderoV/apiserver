@@ -63,10 +63,10 @@ let getUserData = (id, callback) => {
     });
 }
 
-let deleteRadioById = (table, id, callback) => {
+let editUserData = (newData, callback) => {
     dbClient.connect((err, client, done) => {
         if (err) throw console.error(err);
-        client.query(`delete from ${table} where id = ${id}`,
+        client.query(`update users set password = $1 where id = ${newData.userId}`, [newData.password],
             (err, result) => {
                 if (err) throw console.error(err);
                 data = result.rows;
@@ -80,93 +80,4 @@ let deleteRadioById = (table, id, callback) => {
     });
 }
 
-let postPubRuleToDB = (table, rule, callback) => {
-    dbClient.connect((err, client, done) => {
-        if (err) throw console.error(err);
-        client.query(`insert into ${table} (rule) values ($1)`,
-            [rule.rule], (err, result) => {
-            });
-        done();
-        data = rule
-        callback(data);
-        return data
-    });
-}
-
-let getRandomPubRule = (table, callback) => {
-    let count;
-    let random;
-    dbClient.connect((err, client, done) => {
-        if (err) throw console.error(err);
-        client.query(`select * from ${table} order by 1`,
-            (err, result) => {
-                if (err) throw console.error(err);
-                count = result.rows.length;
-                random = Math.floor(Math.random() * count) + 1;
-                client.query(`select * from ${table} where id = ${random} order by 1`,
-                    (err, result) => {
-                        if (err) throw console.error(err);
-                        data = result.rows;
-                        if (!data) {
-                            data = {};
-                        }
-                        done();
-                        callback(data);
-                        return data;
-                    });
-            });
-    });
-}
-
-let deletePubRuleById = (table, id, callback) => {
-    dbClient.connect((err, client, done) => {
-        if (err) throw console.error(err);
-        client.query(`delete from ${table} where id = ${id}`,
-            (err, result) => {
-                if (err) throw console.error(err);
-                data = result.rows;
-                if (!data) {
-                    data = {};
-                }
-                done();
-                callback(data);
-                return data;
-            });
-    });
-}
-
-let getPubRuleById = (table, id, callback) => {
-    dbClient.connect((err, client, done) => {
-        if (err) throw console.error(err);
-        client.query(`select * from ${table} where id = ${id} order by 1`,
-            (err, result) => {
-                if (err) throw console.error(err);
-                data = result.rows;
-                if (!data) {
-                    data = {};
-                }
-                done();
-                callback(data);
-                return data;
-            });
-    });
-}
-
-let editPubRuleById = (table, newRule, id, callback) => {
-    dbClient.connect((err, client, done) => {
-        if (err) throw console.error(err);
-        client.query(`update ${table} set rule = $1 where id = ${id}`, [newRule],
-            (err, result) => {
-                if (err) throw console.error(err);
-                data = result.rows;
-                if (!data) {
-                    data = {};
-                }
-                done();
-                callback(data);
-                return data;
-            });
-    });
-}
-
-module.exports = { initDB, postUserToDB, validateUser, getUserData };
+module.exports = { initDB, postUserToDB, validateUser, getUserData, editUserData };
