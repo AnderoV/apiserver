@@ -112,7 +112,7 @@ let postTaskToDB = (task, callback) => {
 let getAllTasks = (userId, callback) => {
     dbClient.connect((err, client, done) => {
         if (err) throw console.error(err);
-        client.query(`select * from tasks where tasks.userId = ${userId}`,
+        client.query(`select * from tasks where tasks.userId = ${userId} order by 1`,
             (err, result) => {
                 if (err) throw console.error(err);
                 data = result.rows;
