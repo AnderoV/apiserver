@@ -6,6 +6,7 @@ const db = require('./database.js');
 var cors = require('cors')
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
+let port = process.env.PORT || 3000;
 
 db.initUserDB();
 db.initTaskDB();
@@ -168,4 +169,4 @@ app.delete('/tasks/:id', authenticateJWT, (req, res) => {
     });
 });
 
-app.listen(3000);
+app.listen(port);
