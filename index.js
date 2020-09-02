@@ -33,10 +33,10 @@ const authenticateJWT = (req, res, next) => {
 
 app.post('/users/register', (req, res) => {
     models.registerModel = {
-        username: req.query.username,
-        firstname: req.query.firstname,
-        lastname: req.query.lastname,
-        password: req.query.password,
+        username: req.body.username,
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        password: req.body.password,
         createdAt: new Date()
     }
     db.postUserToDB(models.registerModel, data => {
@@ -46,8 +46,8 @@ app.post('/users/register', (req, res) => {
 
 app.post('/users/login', (req, res) => {
     models.loginModel = {
-        username: req.query.username,
-        password: req.query.password
+        username: req.body.username,
+        password: req.body.password
     }
     db.validateUser(models.loginModel, data => {
         if (data.length === 0) {
@@ -83,7 +83,7 @@ app.get('/user', authenticateJWT, (req, res) => {
 
 app.put('/user', authenticateJWT, (req, res) => {
     let newData = {
-        password: req.query.password,
+        password: req.body.password,
         userId: req.user.id
     }
     db.editUserData(newData, data => {
@@ -94,9 +94,9 @@ app.put('/user', authenticateJWT, (req, res) => {
 app.post('/tasks', authenticateJWT, (req, res) => {
     let newTask = {
         userId: req.user.id,
-        title: req.query.title,
-        description: req.query.description,
-        markedAsDone: false,
+        title: req.body.title,
+        description: req.body.description,
+        markedAsDone: req.body.markedasdone,
         createdAt: new Date()
     }
     db.postTaskToDB(newTask, data => {
@@ -152,9 +152,9 @@ app.put('/tasks/:id', authenticateJWT, (req, res) => {
     let newData = {
         userId: req.user.id,
         id: parseInt(req.params.id),
-        title: req.query.title,
-        description: req.query.description,
-        markedAsDone: req.query.markedasdone
+        title: req.body.title,
+        description: req.body.description,
+        markedAsDone: req.body.markedasdone
     }
     db.editTaskData(newData, data => {
         res.status(res.statusCode).json(data);
